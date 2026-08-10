@@ -11,7 +11,7 @@ import { useAuth } from '../../context/AuthContext';
 
 interface CalculatorItem {
   wasteTypeId: string;
-  weight: number;
+  weight: number | string;
 }
 
 export const WasteCalculatorModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
@@ -55,7 +55,7 @@ export const WasteCalculatorModal: React.FC<{ isOpen: boolean; onClose: () => vo
 
   const handleAddItem = () => {
     if (wasteTypes.length === 0) return;
-    setItems([...items, { wasteTypeId: wasteTypes[0].id, weight: 2 }]);
+    setItems([...items, { wasteTypeId: wasteTypes[0].id, weight: '' }]);
   };
 
   const handleRemoveItem = (index: number) => {
@@ -68,9 +68,14 @@ export const WasteCalculatorModal: React.FC<{ isOpen: boolean; onClose: () => vo
     setItems(next);
   };
 
-  const handleWeightChange = (index: number, weight: number) => {
+  const handleWeightChange = (index: number, val: string) => {
     const next = [...items];
-    next[index].weight = Math.max(0.1, weight);
+    if (val === '') {
+      next[index].weight = '';
+    } else {
+      const num = parseFloat(val);
+      next[index].weight = isNaN(num) ? '' : Math.max(0, num);
+    }
     setItems(next);
   };
 
@@ -78,11 +83,12 @@ export const WasteCalculatorModal: React.FC<{ isOpen: boolean; onClose: () => vo
   const calculatedDetails = items.map(item => {
     const wt = wasteTypes.find(w => w.id === item.wasteTypeId);
     const price = wt?.price_per_kg || 0;
-    const subtotal = price * (item.weight || 0);
+    const numWeight = typeof item.weight === 'number' ? item.weight : (parseFloat(item.weight) || 0);
+    const subtotal = price * numWeight;
     return {
       catName: wt?.name || 'Sampah',
       pricePerKg: price,
-      weight: item.weight || 0,
+      weight: numWeight,
       subtotal
     };
   });
@@ -131,10 +137,12 @@ export const WasteCalculatorModal: React.FC<{ isOpen: boolean; onClose: () => vo
                     <Input
                       label="Berat (kg)"
                       type="number"
-                      step="0.5"
-                      min="0.1"
+                      step="0.1"
+                      min="0"
+                      placeholder="0"
                       value={item.weight}
-                      onChange={e => handleWeightChange(idx, parseFloat(e.target.value) || 0)}
+                      onChange={e => handleWeightChange(idx, e.target.value)}
+                      onFocus={e => e.target.select()}
                     />
                   </div>
 

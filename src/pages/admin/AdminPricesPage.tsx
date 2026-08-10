@@ -24,7 +24,7 @@ export const AdminPricesPage: React.FC = () => {
   // Form State
   const [name, setName] = useState('');
   const [categoryId, setCategoryId] = useState<string>('');
-  const [price, setPrice] = useState<number>(3000);
+  const [price, setPrice] = useState<number | string>(3000);
   const [unit, setUnit] = useState<'kg' | 'liter' | 'pcs'>('kg');
   const [submitting, setSubmitting] = useState(false);
 
@@ -75,6 +75,8 @@ export const AdminPricesPage: React.FC = () => {
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const numericPrice = typeof price === 'number' ? price : (Number(price) || 0);
+
     try {
       setSubmitting(true);
       if (editingType) {
@@ -82,7 +84,7 @@ export const AdminPricesPage: React.FC = () => {
         await supabaseService.updateWasteType(editingType.id, {
           name,
           category_id: categoryId,
-          price_per_kg: price,
+          price_per_kg: numericPrice,
           unit
         });
       } else {
@@ -90,7 +92,7 @@ export const AdminPricesPage: React.FC = () => {
         await supabaseService.createWasteType({
           name,
           category_id: categoryId,
-          price_per_kg: price,
+          price_per_kg: numericPrice,
           unit
         });
         confetti({ particleCount: 40, spread: 40, origin: { y: 0.7 } });
@@ -302,8 +304,10 @@ export const AdminPricesPage: React.FC = () => {
             label={`HARGA BELI (RP PER ${unit.toUpperCase()})`}
             type="number"
             value={price}
-            onChange={e => setPrice(Number(e.target.value))}
-            placeholder="3000"
+            onChange={e => setPrice(e.target.value === '' ? '' : Math.max(0, Number(e.target.value)))}
+            onFocus={e => e.target.select()}
+            placeholder="0"
+            min="0"
             step="100"
             required
           />

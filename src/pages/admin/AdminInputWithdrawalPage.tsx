@@ -187,8 +187,10 @@ export const AdminInputWithdrawalPage: React.FC = () => {
             type="number"
             value={amount}
             onChange={e => setAmount(e.target.value === '' ? '' : Number(e.target.value))}
+            onFocus={e => e.target.select()}
             placeholder="Masukkan nominal (contoh: 50000)"
             step="1000"
+            min="0"
             required
             icon={<Coins className="w-4 h-4 text-amber-600" />}
           />

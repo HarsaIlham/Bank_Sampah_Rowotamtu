@@ -73,9 +73,9 @@ export const AdminSettingsPage: React.FC = () => {
   const [facebook, setFacebook] = useState<string>('Bank Sampah Desa Rowotamtu');
 
   // Form states for Revenue Sharing
-  const [nasabahPct, setNasabahPct] = useState<number>(85);
-  const [pengurusPct, setPengurusPct] = useState<number>(10);
-  const [kasPct, setKasPct] = useState<number>(5);
+  const [nasabahPct, setNasabahPct] = useState<number | string>(85);
+  const [pengurusPct, setPengurusPct] = useState<number | string>(10);
+  const [kasPct, setKasPct] = useState<number | string>(5);
 
   useEffect(() => {
     let isMounted = true;
@@ -117,7 +117,10 @@ export const AdminSettingsPage: React.FC = () => {
     return () => { isMounted = false; };
   }, []);
 
-  const totalPct = nasabahPct + pengurusPct + kasPct;
+  const numNasabah = typeof nasabahPct === 'number' ? nasabahPct : (parseFloat(nasabahPct) || 0);
+  const numPengurus = typeof pengurusPct === 'number' ? pengurusPct : (parseFloat(pengurusPct) || 0);
+  const numKas = typeof kasPct === 'number' ? kasPct : (parseFloat(kasPct) || 0);
+  const totalPct = numNasabah + numPengurus + numKas;
   const isValidTotal = Math.abs(totalPct - 100) < 0.01;
 
   const handleSaveAll = async (e: React.FormEvent) => {
@@ -153,9 +156,9 @@ export const AdminSettingsPage: React.FC = () => {
           days: operatingDays.trim(),
           hours: operatingHours.trim()
         },
-        nasabah_share_pct: nasabahPct,
-        pengurus_share_pct: pengurusPct,
-        kas_share_pct: kasPct
+        nasabah_share_pct: numNasabah,
+        pengurus_share_pct: numPengurus,
+        kas_share_pct: numKas
       });
 
       setSettings(updated);
@@ -172,7 +175,15 @@ export const AdminSettingsPage: React.FC = () => {
   };
 
   const handlePctChange = (field: 'nasabah' | 'pengurus' | 'kas', value: string) => {
-    const num = parseFloat(value) || 0;
+    if (value === '') {
+      if (field === 'nasabah') setNasabahPct('');
+      else if (field === 'pengurus') setPengurusPct('');
+      else setKasPct('');
+      return;
+    }
+
+    const num = parseFloat(value);
+    if (isNaN(num)) return;
     const clamped = Math.max(0, Math.min(100, num));
 
     if (field === 'nasabah') setNasabahPct(clamped);
@@ -480,8 +491,10 @@ export const AdminSettingsPage: React.FC = () => {
                     min="0"
                     max="100"
                     step="0.5"
+                    placeholder="0"
                     value={nasabahPct}
                     onChange={e => handlePctChange('nasabah', e.target.value)}
+                    onFocus={e => e.target.select()}
                     className="w-full bg-white border border-pink-300 rounded-xl px-3 py-2.5 text-xl font-black text-pink-600 text-center focus:ring-2 focus:ring-pink-400 focus:outline-none"
                   />
                   <span className="text-lg font-bold text-pink-400">%</span>
@@ -500,8 +513,10 @@ export const AdminSettingsPage: React.FC = () => {
                     min="0"
                     max="100"
                     step="0.5"
+                    placeholder="0"
                     value={pengurusPct}
                     onChange={e => handlePctChange('pengurus', e.target.value)}
+                    onFocus={e => e.target.select()}
                     className="w-full bg-white border border-violet-300 rounded-xl px-3 py-2.5 text-xl font-black text-violet-600 text-center focus:ring-2 focus:ring-violet-400 focus:outline-none"
                   />
                   <span className="text-lg font-bold text-violet-400">%</span>
@@ -520,8 +535,10 @@ export const AdminSettingsPage: React.FC = () => {
                     min="0"
                     max="100"
                     step="0.5"
+                    placeholder="0"
                     value={kasPct}
                     onChange={e => handlePctChange('kas', e.target.value)}
+                    onFocus={e => e.target.select()}
                     className="w-full bg-white border border-sky-300 rounded-xl px-3 py-2.5 text-xl font-black text-sky-600 text-center focus:ring-2 focus:ring-sky-400 focus:outline-none"
                   />
                   <span className="text-lg font-bold text-sky-400">%</span>

@@ -13,7 +13,7 @@ import confetti from 'canvas-confetti';
 
 interface InputDepositRow {
   wasteTypeId: string;
-  weight: number;
+  weight: number | string;
 }
 
 export const AdminInputDepositPage: React.FC = () => {
@@ -40,7 +40,7 @@ export const AdminInputDepositPage: React.FC = () => {
 
   useEffect(() => {
     if (wasteTypes.length > 0 && rows.length === 0) {
-      setRows([{ wasteTypeId: wasteTypes[0].id, weight: 0 }]);
+      setRows([{ wasteTypeId: wasteTypes[0].id, weight: '' }]);
     }
   }, [wasteTypes]);
 
@@ -48,7 +48,7 @@ export const AdminInputDepositPage: React.FC = () => {
 
   const handleAddRow = () => {
     if (wasteTypes.length === 0) return;
-    setRows([...rows, { wasteTypeId: wasteTypes[0].id, weight: 0 }]);
+    setRows([...rows, { wasteTypeId: wasteTypes[0].id, weight: '' }]);
   };
 
   const handleRemoveRow = (index: number) => {
@@ -63,9 +63,14 @@ export const AdminInputDepositPage: React.FC = () => {
     setRows(updated);
   };
 
-  const handleWeightChange = (index: number, weight: number) => {
+  const handleWeightChange = (index: number, val: string) => {
     const updated = [...rows];
-    updated[index].weight = Math.max(0, weight);
+    if (val === '') {
+      updated[index].weight = '';
+    } else {
+      const num = parseFloat(val);
+      updated[index].weight = isNaN(num) ? '' : Math.max(0, num);
+    }
     setRows(updated);
   };
 
@@ -73,11 +78,12 @@ export const AdminInputDepositPage: React.FC = () => {
   const calculatedItems = rows.map(r => {
     const wt = wasteTypes.find(w => w.id === r.wasteTypeId);
     const pricePerKg = wt?.price_per_kg || 0;
-    const subtotal = pricePerKg * (r.weight || 0);
+    const numWeight = typeof r.weight === 'number' ? r.weight : (parseFloat(r.weight) || 0);
+    const subtotal = pricePerKg * numWeight;
     return {
       waste_type_id: r.wasteTypeId,
       wasteTypeName: wt?.name || 'Sampah',
-      weight: r.weight || 0,
+      weight: numWeight,
       price_per_kg: pricePerKg,
       subtotal
     };
@@ -172,7 +178,7 @@ export const AdminInputDepositPage: React.FC = () => {
                 setIsSuccess(false);
                 setSelectedNasabahId('');
                 if (wasteTypes.length > 0) {
-                  setRows([{ wasteTypeId: wasteTypes[0].id, weight: 0 }]);
+                  setRows([{ wasteTypeId: wasteTypes[0].id, weight: '' }]);
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
@@ -264,9 +270,11 @@ export const AdminInputDepositPage: React.FC = () => {
                       label="Berat (kg)"
                       type="number"
                       step="0.1"
-                      min="0.1"
+                      min="0"
+                      placeholder="0"
                       value={row.weight}
-                      onChange={e => handleWeightChange(idx, parseFloat(e.target.value) || 0)}
+                      onChange={e => handleWeightChange(idx, e.target.value)}
+                      onFocus={e => e.target.select()}
                     />
                   </div>
 
