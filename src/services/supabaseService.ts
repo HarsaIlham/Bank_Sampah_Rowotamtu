@@ -339,9 +339,38 @@ export const supabaseService = {
 
   /** Register a new nasabah (Creates Auth User + Profile + Nasabah) */
   async createNasabah(input: CreateNasabahInput): Promise<NasabahWithProfile> {
-    const email = nikToEmail(input.nik.trim());
+    const cleanNik = input.nik.trim();
 
-    // 1. Sign up new auth user (using anon key or admin)
+    // 1. First attempt: Direct RPC in PostgreSQL (Bypasses email rate limit completely)
+    try {
+      const { data: rpcData, error: rpcErr } = await supabase.rpc('create_nasabah_user', {
+        p_nik: cleanNik,
+        p_full_name: input.full_name,
+        p_phone: input.phone || '',
+        p_password: input.password,
+        p_dusun: input.dusun || '',
+        p_rt_rw: input.rt_rw || '',
+        p_address: input.address || `Dusun ${input.dusun || ''}, RT ${input.rt_rw || ''}`
+      });
+
+      if (!rpcErr && rpcData) {
+        return rpcData as unknown as NasabahWithProfile;
+      }
+
+      // If error is a business exception (e.g. NIK already exists), throw directly
+      if (rpcErr && rpcErr.message && !rpcErr.message.includes('function') && !rpcErr.message.includes('does not exist')) {
+        throw new Error(rpcErr.message);
+      }
+    } catch (err: any) {
+      if (err.message && (err.message.includes('sudah terdaftar') || err.message.includes('sudah ada'))) {
+        throw err;
+      }
+      // If RPC is not installed in database, proceed to standard fallback
+      console.warn('RPC create_nasabah_user not available or failed, falling back to auth.signUp:', err);
+    }
+
+    // 2. Fallback attempt: Standard Supabase Auth signUp
+    const email = nikToEmail(cleanNik);
     const { data: authData, error: authErr } = await supabase.auth.signUp({
       email,
       password: input.password,
@@ -359,12 +388,12 @@ export const supabaseService = {
 
     const profileId = authData.user.id;
 
-    // 2. Insert into nasabah table
+    // 3. Insert into nasabah table
     const { data: nasabah, error: nasabahErr } = await supabase
       .from('nasabah')
       .insert({
         profile_id: profileId,
-        nik: input.nik.trim(),
+        nik: cleanNik,
         address: input.address,
         rt_rw: input.rt_rw || '',
         dusun: input.dusun || '',

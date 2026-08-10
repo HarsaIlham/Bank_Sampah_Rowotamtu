@@ -297,7 +297,7 @@ export interface CreateWithdrawalInput {
 // ============================================================================
 
 /** Email domain appended to NIK for Supabase Auth */
-export const NIK_EMAIL_DOMAIN = '@banksampah.local';
+export const NIK_EMAIL_DOMAIN = '@resik.id';
 
 /** Convert NIK to Supabase Auth email format */
 export function nikToEmail(nik: string): string {
