@@ -33,7 +33,7 @@ BEGIN
     RAISE EXCEPTION 'NIK % sudah terdaftar sebagai nasabah.', p_nik;
   END IF;
 
-  v_email := p_nik || '@resik.id';
+  v_email := p_nik || '@banksampah.local';
   
   -- Check if email already in auth.users
   IF EXISTS (SELECT 1 FROM auth.users WHERE email = v_email) THEN

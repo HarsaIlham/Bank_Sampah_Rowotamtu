@@ -41,7 +41,7 @@ export const supabaseService = {
     if (cleanId.includes('@')) {
       emailsToTry = [cleanId];
     } else {
-      emailsToTry = [`${cleanId}@resik.id`, `${cleanId}@banksampah.local`];
+      emailsToTry = [`${cleanId}@banksampah.local`, `${cleanId}@resik.id`];
     }
 
     let lastError: any = null;
