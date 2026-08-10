@@ -6,6 +6,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
+import { ConfirmLogoutModal } from '../../components/common/ConfirmLogoutModal';
 import { User, Lock, Phone, MapPin, CheckCircle, LogOut } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -17,7 +18,7 @@ export const NasabahProfilePage: React.FC = () => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
-  const [loggingOut, setLoggingOut] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   if (!profile) return null;
 
@@ -36,13 +37,11 @@ export const NasabahProfilePage: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      setLoggingOut(true);
       await signOut();
       navigate('/login', { replace: true });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error('Error logging out:', err);
-    } finally {
-      setLoggingOut(false);
     }
   };
 
@@ -115,12 +114,11 @@ export const NasabahProfilePage: React.FC = () => {
         <Button
           variant="outline"
           size="md"
-          onClick={handleLogout}
-          disabled={loggingOut}
+          onClick={() => setShowLogoutConfirm(true)}
           className="border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 font-bold flex items-center gap-2 cursor-pointer"
         >
           <LogOut className="w-4 h-4 text-rose-500" />
-          {loggingOut ? 'Keluar...' : 'Keluar / Logout'}
+          Keluar / Logout
         </Button>
       </div>
 
@@ -200,20 +198,28 @@ export const NasabahProfilePage: React.FC = () => {
         <div>
           <h4 className="font-bold text-slate-800 text-sm">Ingin Keluar Dari Akun Ini?</h4>
           <p className="text-xs text-slate-500 mt-0.5">
-            Sesi autentikasi Anda akan dihapus secara bersih dari browser ini.
+            Sesi autentikasi Anda akan diakhiri dan dihapus secara bersih dari browser ini.
           </p>
         </div>
         <Button
           variant="outline"
           size="md"
-          onClick={handleLogout}
-          disabled={loggingOut}
+          onClick={() => setShowLogoutConfirm(true)}
           className="border-rose-300 text-rose-700 hover:bg-rose-100 font-bold shrink-0 flex items-center gap-2 cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
-          {loggingOut ? 'Keluar...' : 'Logout Akun'}
+          Logout Akun
         </Button>
       </Card>
+
+      {/* Confirmation Modal */}
+      <ConfirmLogoutModal
+        isOpen={showLogoutConfirm}
+        onClose={() => setShowLogoutConfirm(false)}
+        onConfirm={handleLogout}
+        title="Konfirmasi Keluar Akun Nasabah"
+        message="Apakah Anda yakin ingin keluar dari akun nasabah ini? Anda dapat masuk kembali kapan saja menggunakan NIK dan password Anda."
+      />
 
     </div>
   );

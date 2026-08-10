@@ -70,9 +70,11 @@ export const AdminInputWithdrawalPage: React.FC = () => {
       });
 
       setIsSuccess(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
       console.error('Error recording withdrawal:', err);
       setError(err.message || 'Gagal mencatat transaksi penarikan');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -113,6 +115,7 @@ export const AdminInputWithdrawalPage: React.FC = () => {
                 setIsSuccess(false);
                 setSelectedNasabahId('');
                 setAmount('');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               className="cursor-pointer"
             >

@@ -22,6 +22,7 @@ import {
 import logoBank from '../../assets/logo-bank.png';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
+import { ConfirmLogoutModal } from '../common/ConfirmLogoutModal';
 
 interface NavbarProps {
   onOpenCalculator?: () => void;
@@ -32,12 +33,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCalculator }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/login');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -248,7 +251,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCalculator }) => {
                   variant="outline" 
                   size="sm" 
                   icon={<LogOut className="w-3.5 h-3.5 text-rose-500" />}
-                  onClick={handleSignOut}
+                  onClick={() => setShowLogoutConfirm(true)}
                   className="text-rose-600 border-rose-200 hover:bg-rose-50 font-bold cursor-pointer"
                 >
                   Keluar
@@ -263,7 +266,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCalculator }) => {
                   variant="outline" 
                   size="sm" 
                   icon={<LogOut className="w-3.5 h-3.5 text-rose-500" />}
-                  onClick={handleSignOut}
+                  onClick={() => setShowLogoutConfirm(true)}
                   className="text-rose-600 border-rose-200 hover:bg-rose-50 font-bold cursor-pointer"
                 >
                   Keluar
@@ -338,7 +341,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCalculator }) => {
 
               <div className="pt-2 border-t border-slate-100">
                 <button
-                  onClick={() => { setMobileMenuOpen(false); handleSignOut(); }}
+                  onClick={() => { setMobileMenuOpen(false); setShowLogoutConfirm(true); }}
                   className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-extrabold text-xs transition-colors cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" /> Keluar dari Akun Nasabah
@@ -397,7 +400,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCalculator }) => {
               {/* Dedicated Admin Logout Button in Drawer */}
               <div className="pt-2 border-t border-slate-100">
                 <button
-                  onClick={() => { setMobileMenuOpen(false); handleSignOut(); }}
+                  onClick={() => { setMobileMenuOpen(false); setShowLogoutConfirm(true); }}
                   className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-extrabold text-xs transition-colors cursor-pointer border border-rose-100"
                 >
                   <LogOut className="w-4 h-4" /> Keluar dari Akun Admin
@@ -407,6 +410,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCalculator }) => {
           )}
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmLogoutModal
+        isOpen={showLogoutConfirm}
+        onClose={() => setShowLogoutConfirm(false)}
+        onConfirm={handleSignOut}
+        title="Konfirmasi Keluar Akun"
+        message={`Apakah Anda yakin ingin keluar dari sesi ${currentRole === 'admin' ? 'Administrator' : 'Nasabah'}? Anda harus memasukkan kembali NIK dan password untuk login.`}
+      />
     </header>
   );
 };

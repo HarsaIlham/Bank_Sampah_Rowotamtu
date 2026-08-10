@@ -117,10 +117,12 @@ export const AdminInputDepositPage: React.FC = () => {
       });
 
       setIsSuccess(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
     } catch (err: any) {
       console.error('Error submitting deposit:', err);
       setErrorMsg(err.message || 'Gagal menyimpan transaksi penimbangan sampah');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -172,6 +174,7 @@ export const AdminInputDepositPage: React.FC = () => {
                 if (wasteTypes.length > 0) {
                   setRows([{ wasteTypeId: wasteTypes[0].id, weight: 0 }]);
                 }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               className="cursor-pointer"
             >

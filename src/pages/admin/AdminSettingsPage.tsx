@@ -26,6 +26,7 @@ import {
   LogOut,
   ShieldCheck
 } from 'lucide-react';
+import { ConfirmLogoutModal } from '../../components/common/ConfirmLogoutModal';
 import confetti from 'canvas-confetti';
 
 const InstagramIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4 text-pink-500' }) => (
@@ -52,6 +53,7 @@ export const AdminSettingsPage: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'profile' | 'operational' | 'social' | 'revenue'>('profile');
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState<boolean>(false);
 
   // Form states for Profil Lembaga
   const [bankName, setBankName] = useState<string>('Bank Sampah Digital Desa Rowotamtu');
@@ -586,16 +588,26 @@ export const AdminSettingsPage: React.FC = () => {
 
           <button
             type="button"
-            onClick={async () => {
-              await signOut();
-              navigate('/login');
-            }}
+            onClick={() => setShowLogoutConfirm(true)}
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-rose-200 text-rose-600 hover:bg-rose-600 hover:text-white font-extrabold text-xs shadow-xs transition-all cursor-pointer"
           >
             <LogOut className="w-4 h-4" /> Keluar / Logout Akun Admin
           </button>
         </div>
       </Card>
+
+      {/* Confirmation Modal */}
+      <ConfirmLogoutModal
+        isOpen={showLogoutConfirm}
+        onClose={() => setShowLogoutConfirm(false)}
+        onConfirm={async () => {
+          await signOut();
+          navigate('/login');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        title="Konfirmasi Keluar Administrator"
+        message="Apakah Anda yakin ingin keluar dari sesi Admin Posko? Anda harus login kembali untuk mengelola transaksi kas dan data nasabah."
+      />
 
     </div>
   );
