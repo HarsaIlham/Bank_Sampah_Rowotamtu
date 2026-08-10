@@ -1,0 +1,162 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --primary: #EC4899;
+    --primary-hover: #DB2777;
+    --secondary: #FBCFE8;
+    --background: #FFF7FB;
+    --card: #FFFFFF;
+    --text-primary: #1E293B;
+    --text-muted: #64748B;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--background);
+    color: var(--text-primary);
+  }
+}
+
+/* Custom Utilities for Desa Rowotamtu Theme */
+.bg-desa-bg {
+  background-color: #FFF7FB;
+}
+
+.bg-desa-primary {
+  background-color: #EC4899;
+}
+
+.bg-desa-secondary {
+  background-color: #FBCFE8;
+}
+
+.text-desa-primary {
+  color: #EC4899;
+}
+
+.border-desa-primary {
+  border-color: #EC4899;
+}
+
+/* Glassmorphism & Custom Card styles */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(251, 207, 232, 0.5);
+}
+
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.15);
+}
+
+/* Hide scrollbar for clean horizontal scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ============================================================================
+   SPLASH SCREEN ANIMATIONS — RESIK Bank Sampah Digital
+   ============================================================================ */
+
+@keyframes splash-scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes splash-slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes splash-fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes splash-fade-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes splash-pulse-dot {
+  0%, 80%, 100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes splash-line-grow {
+  0% { width: 0%; }
+  100% { width: 60%; }
+}
+
+/* Utility classes */
+.splash-scale-in {
+  animation: splash-scale-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+}
+
+.splash-slide-up {
+  animation: splash-slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.splash-fade-in {
+  animation: splash-fade-in 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.splash-fade-out {
+  animation: splash-fade-out 0.45s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.splash-line-grow {
+  animation: splash-line-grow 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: 1s;
+  width: 0%;
+}
+
+/* Staggered animation delays */
+.splash-delay-100 { animation-delay: 0.1s; }
+.splash-delay-200 { animation-delay: 0.2s; }
+.splash-delay-400 { animation-delay: 0.4s; }
+.splash-delay-600 { animation-delay: 0.6s; }
+.splash-delay-800 { animation-delay: 0.8s; }
+.splash-delay-1000 { animation-delay: 1.0s; }
+.splash-delay-1200 { animation-delay: 1.2s; }
