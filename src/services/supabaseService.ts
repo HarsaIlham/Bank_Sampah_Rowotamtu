@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { supabase, supabaseIsolated } from '../lib/supabase';
 import { INITIAL_ARTICLES } from './mockData';
 import { 
   nikToEmail, 
@@ -404,9 +404,9 @@ export const supabaseService = {
       console.warn('RPC create_nasabah_user not available or failed, falling back to auth.signUp:', err);
     }
 
-    // 2. Fallback attempt: Standard Supabase Auth signUp
+    // 2. Fallback attempt: Isolated Supabase Auth signUp (prevents logging out Admin)
     const email = nikToEmail(cleanNik);
-    const { data: authData, error: authErr } = await supabase.auth.signUp({
+    const { data: authData, error: authErr } = await supabaseIsolated.auth.signUp({
       email,
       password: input.password,
       options: {
