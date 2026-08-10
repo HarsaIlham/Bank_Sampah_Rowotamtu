@@ -310,6 +310,17 @@ export function emailToNik(email: string): string {
   return email.replace(NIK_EMAIL_DOMAIN, '').replace('@resik.id', '');
 }
 
+/** Daftar Dusun Resmi di Desa Rowotamtu */
+export const DUSUN_ROWOTAMTU = [
+  'Paseban',
+  'Glagasan',
+  'Karanganyar',
+  'Curah Mluwo',
+  'Krajan'
+] as const;
+
+export type DusunRowotamtu = typeof DUSUN_ROWOTAMTU[number];
+
 // ============================================================================
 // BACKWARD COMPATIBILITY ALIASES (temporary for seamless phase migration)
 // ============================================================================

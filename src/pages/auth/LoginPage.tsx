@@ -224,9 +224,9 @@ export const LoginPage: React.FC = () => {
                 </p>
                 <div className="space-y-1.5">
                   {[
-                    { name: 'Ibu Siti Aminah', nik: '3213015408850001', dusun: 'Rowotamtu Mekar' },
-                    { name: 'Pak Budi Santoso', nik: '3213011204780002', dusun: 'Rowotamtu Asri' },
-                    { name: 'Teh Rina Karlina', nik: '3213012109920003', dusun: 'Rowotamtu Rahayu' }
+                    { name: 'Ibu Siti Aminah', nik: '3213015408850001', dusun: 'Paseban' },
+                    { name: 'Pak Budi Santoso', nik: '3213011204780002', dusun: 'Glagasan' },
+                    { name: 'Teh Rina Karlina', nik: '3213012109920003', dusun: 'Karanganyar' }
                   ].map(nasabah => (
                     <button
                       key={nasabah.nik}

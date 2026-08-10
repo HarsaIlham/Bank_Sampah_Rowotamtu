@@ -6,6 +6,7 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
+import { DUSUN_ROWOTAMTU } from '../../types';
 import { Search, UserPlus, Phone, MapPin, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -22,7 +23,7 @@ export const AdminNasabahPage: React.FC = () => {
   const [nik, setNik] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('123456');
-  const [dusun, setDusun] = useState('Rowotamtu Mekar');
+  const [dusun, setDusun] = useState<string>(DUSUN_ROWOTAMTU[0]);
   const [rtRw, setRtRw] = useState('01/01');
   const [address, setAddress] = useState('');
 
@@ -62,6 +63,8 @@ export const AdminNasabahPage: React.FC = () => {
       setNik('');
       setPhone('');
       setPassword('123456');
+      setDusun(DUSUN_ROWOTAMTU[0]);
+      setRtRw('01/01');
       setAddress('');
 
       confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
@@ -205,9 +208,9 @@ export const AdminNasabahPage: React.FC = () => {
                 onChange={e => setDusun(e.target.value)}
                 className="w-full bg-white border border-pink-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:ring-2 focus:ring-pink-400 focus:outline-none"
               >
-                <option value="Rowotamtu Mekar">Rowotamtu Mekar</option>
-                <option value="Rowotamtu Asri">Rowotamtu Asri</option>
-                <option value="Rowotamtu Rahayu">Rowotamtu Rahayu</option>
+                {DUSUN_ROWOTAMTU.map(item => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
               </select>
             </div>
 
