@@ -170,6 +170,8 @@ export interface WasteTypeWithCategory extends WasteType {
 export interface DepositWithItems extends Deposit {
   items: (DepositItem & {
     waste_type_name?: string;
+    category_id?: string;
+    category_name?: string;
   })[];
   // Computed from items
   total_amount: number;           // total bruto (weight × price)
@@ -239,6 +241,7 @@ export interface BankSampahReports {
     category_name: string;
     totalKg: number;
     totalRp: number;
+    itemsCount?: number;
   }[];
 }
 

@@ -490,14 +490,21 @@ export const supabaseService = {
       .insert(itemsToInsert)
       .select(`
         *,
-        waste_type:waste_types(name)
+        waste_type:waste_types(
+          id,
+          name,
+          category_id,
+          category:waste_categories(id, name)
+        )
       `);
 
     if (itemsErr) throw itemsErr;
 
     const formattedItems = (items || []).map((i: any) => ({
       ...i,
-      waste_type_name: i.waste_type?.name || ''
+      waste_type_name: i.waste_type?.name || '',
+      category_id: i.waste_type?.category_id || i.waste_type?.category?.id || '',
+      category_name: i.waste_type?.category?.name || ''
     }));
 
     const totalAmount = formattedItems.reduce((acc, i) => acc + Number(i.subtotal), 0);
@@ -525,7 +532,12 @@ export const supabaseService = {
         *,
         items:deposit_items(
           *,
-          waste_type:waste_types(name)
+          waste_type:waste_types(
+            id,
+            name,
+            category_id,
+            category:waste_categories(id, name)
+          )
         ),
         customer:nasabah(
           id,
@@ -546,7 +558,9 @@ export const supabaseService = {
     return (data || []).map((d: any) => {
       const items = (d.items || []).map((i: any) => ({
         ...i,
-        waste_type_name: i.waste_type?.name || ''
+        waste_type_name: i.waste_type?.name || '',
+        category_id: i.waste_type?.category_id || i.waste_type?.category?.id || '',
+        category_name: i.waste_type?.category?.name || ''
       }));
 
       const totalAmount = items.reduce((acc: number, i: any) => acc + Number(i.subtotal || 0), 0);
@@ -663,12 +677,19 @@ export const supabaseService = {
 
   /** Calculate bank sampah dashboard aggregate reports */
   async getReports(): Promise<BankSampahReports> {
-    const [{ count: nasabahCount }, deposits, withdrawals, categories] = await Promise.all([
+    const [{ count: nasabahCount }, deposits, withdrawals, categories, wasteTypes] = await Promise.all([
       supabase.from('nasabah').select('*', { count: 'exact', head: true }),
       this.getDeposits(),
       this.getWithdrawals(),
-      this.getWasteCategories()
+      this.getWasteCategories(),
+      this.getWasteTypes()
     ]);
+
+    // Build waste_type_id -> category_id map as fallback lookup
+    const typeToCategoryMap = new Map<string, string>();
+    wasteTypes.forEach(wt => {
+      typeToCategoryMap.set(wt.id, wt.category_id);
+    });
 
     const totalNasabahCount = nasabahCount || 0;
     const totalDepositRp = deposits.reduce((acc, d) => acc + d.total_amount, 0);
@@ -680,23 +701,32 @@ export const supabaseService = {
     const totalWasteKgCollected = deposits.reduce((acc, d) => acc + d.total_kg, 0);
     const totalTransactionsCount = deposits.length + withdrawals.length;
 
-    // Grouping by category
-    const wasteByCategory = categories.map(cat => {
-      let totalKg = 0;
-      let totalRp = 0;
+    // Grouping by category: calculate real weight and value per category from database records
+    const categoryTotals = new Map<string, { totalKg: number; totalRp: number; count: number }>();
+    categories.forEach(cat => {
+      categoryTotals.set(cat.id, { totalKg: 0, totalRp: 0, count: 0 });
+    });
 
-      deposits.forEach(d => {
-        d.items.forEach(item => {
-          totalKg += item.weight;
-          totalRp += item.subtotal;
-        });
+    deposits.forEach(d => {
+      d.items.forEach(item => {
+        const catId = item.category_id || typeToCategoryMap.get(item.waste_type_id) || '';
+        if (categoryTotals.has(catId)) {
+          const current = categoryTotals.get(catId)!;
+          current.totalKg += Number(item.weight) || 0;
+          current.totalRp += Number(item.subtotal) || 0;
+          current.count += 1;
+        }
       });
+    });
 
+    const wasteByCategory = categories.map(cat => {
+      const totals = categoryTotals.get(cat.id) || { totalKg: 0, totalRp: 0, count: 0 };
       return {
         category_id: cat.id,
         category_name: cat.name,
-        totalKg,
-        totalRp
+        totalKg: Number(totals.totalKg.toFixed(2)),
+        totalRp: Math.round(totals.totalRp),
+        itemsCount: totals.count
       };
     });
 

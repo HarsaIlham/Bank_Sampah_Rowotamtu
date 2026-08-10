@@ -111,23 +111,72 @@ export const AdminReportsPage: React.FC = () => {
 
       {/* Breakdown per Waste Category */}
       <section className="bg-white p-6 rounded-2xl border border-pink-100 space-y-4">
-        <div className="flex items-center gap-2 border-b border-pink-100 pb-3">
-          <Layers className="w-5 h-5 text-pink-600" />
-          <h3 className="text-lg font-bold text-slate-800">Rekapitulasi Berat & Nilai per Kategori Sampah</h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-pink-100 pb-3">
+          <div className="flex items-center gap-2">
+            <Layers className="w-5 h-5 text-pink-600" />
+            <div>
+              <h3 className="text-lg font-bold text-slate-800">Rekapitulasi Berat & Nilai per Kategori Sampah</h3>
+              <p className="text-xs text-slate-500">Akumulasi riil seluruh transaksi penimbangan sampah yang tercatat di database</p>
+            </div>
+          </div>
+          <Badge variant="pink" size="sm">
+            {reports.wasteByCategory.length} Kategori Terdaftar
+          </Badge>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {reports.wasteByCategory.map(cat => (
-            <div key={cat.category_id} className="p-4 rounded-xl bg-pink-50/40 border border-pink-100 space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold uppercase text-pink-700">{cat.category_name}</span>
-                <span className="text-[10px] font-bold bg-white px-2 py-0.5 rounded-full border border-pink-200 text-slate-600">
-                  {formatWeight(cat.totalKg)}
-                </span>
+          {reports.wasteByCategory.map(cat => {
+            const pct = reports.totalWasteKgCollected > 0 
+              ? Math.round((cat.totalKg / reports.totalWasteKgCollected) * 100) 
+              : 0;
+
+            return (
+              <div 
+                key={cat.category_id} 
+                className={`p-4 rounded-2xl border transition-all ${
+                  cat.totalKg > 0 
+                    ? 'bg-gradient-to-br from-pink-50/60 to-rose-50/20 border-pink-200 shadow-xs' 
+                    : 'bg-slate-50/60 border-slate-200 opacity-75'
+                } space-y-2.5`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-extrabold uppercase tracking-wide text-pink-800">
+                    {cat.category_name}
+                  </span>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                    cat.totalKg > 0 
+                      ? 'bg-white border-pink-200 text-pink-700 font-mono' 
+                      : 'bg-white border-slate-200 text-slate-400 font-mono'
+                  }`}>
+                    {formatWeight(cat.totalKg)}
+                  </span>
+                </div>
+
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="text-lg font-black text-slate-800 tracking-tight">
+                    {formatRupiah(cat.totalRp)}
+                  </p>
+                  {cat.totalKg > 0 ? (
+                    <span className="text-[10px] font-semibold text-pink-600 bg-pink-100/70 px-1.5 py-0.5 rounded">
+                      {pct}% dari total
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-slate-400 font-medium">
+                      Belum ada setor
+                    </span>
+                  )}
+                </div>
+
+                {/* Progress bar per category */}
+                <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-pink-500 to-rose-500 h-1.5 rounded-full transition-all duration-500" 
+                    style={{ width: `${Math.min(pct, 100)}%` }}
+                  />
+                </div>
               </div>
-              <p className="text-lg font-extrabold text-slate-800">{formatRupiah(cat.totalRp)}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
