@@ -7,6 +7,7 @@
 -- ============================================================================
 
 -- 1. Allow users to insert/update their own nasabah record
+DROP POLICY IF EXISTS "Users can manage own nasabah" ON public.nasabah;
 CREATE POLICY "Users can manage own nasabah"
   ON public.nasabah FOR ALL
   USING (auth.uid() = profile_id)
@@ -59,8 +60,7 @@ BEGIN
       COALESCE(NEW.raw_user_meta_data->>'dusun', 'Rowotamtu'),
       'active'
     )
-    ON CONFLICT (profile_id) DO NOTHING
-    ON CONFLICT (nik) DO NOTHING;
+    ON CONFLICT (profile_id) DO NOTHING;
   END IF;
 
   RETURN NEW;
@@ -82,5 +82,4 @@ WHERE p.role = 'nasabah'
   AND NOT EXISTS (
     SELECT 1 FROM public.nasabah n WHERE n.profile_id = p.id
   )
-ON CONFLICT (profile_id) DO NOTHING
-ON CONFLICT (nik) DO NOTHING;
+ON CONFLICT (profile_id) DO NOTHING;
