@@ -107,14 +107,14 @@ export const supabaseService = {
         const rawNik = session.user.email ? session.user.email.split('@')[0] : '';
         const { data: newNasabah } = await supabase
           .from('nasabah')
-          .insert({
+          .upsert({
             profile_id: profile.id,
             nik: rawNik || `NIK-${profile.id.slice(0, 8)}`,
             address: 'Desa Rowotamtu',
             rt_rw: '01/01',
             dusun: 'Rowotamtu',
             status: 'active'
-          })
+          }, { onConflict: 'profile_id' })
           .select()
           .maybeSingle();
 
@@ -423,17 +423,17 @@ export const supabaseService = {
 
     const profileId = authData.user.id;
 
-    // 3. Insert into nasabah table
+    // 3. Upsert into nasabah table (auto-handled if trigger already inserted it)
     const { data: nasabah, error: nasabahErr } = await supabase
       .from('nasabah')
-      .insert({
+      .upsert({
         profile_id: profileId,
         nik: cleanNik,
         address: input.address,
         rt_rw: input.rt_rw || '',
         dusun: input.dusun || '',
         status: 'active'
-      })
+      }, { onConflict: 'profile_id' })
       .select(`
         *,
         profile:profiles(*)
