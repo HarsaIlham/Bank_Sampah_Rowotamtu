@@ -28,7 +28,20 @@ export const NasabahDashboardPage: React.FC = () => {
 
   const loading = loadingSummary || loadingDeposits || loadingWithdrawals;
 
-  if (!profile || !nasabah) return null;
+  if (!profile) return null;
+
+  const currentNasabah = nasabah || {
+    id: profile.id,
+    profile_id: profile.id,
+    member_number: 'BS-BARU',
+    nik: 'Nasabah',
+    address: 'Desa Rowotamtu',
+    rt_rw: '01/01',
+    dusun: 'Rowotamtu',
+    join_date: new Date().toISOString().split('T')[0],
+    status: 'active' as const,
+    created_at: new Date().toISOString()
+  };
 
   if (loading) {
     return (
@@ -56,13 +69,13 @@ export const NasabahDashboardPage: React.FC = () => {
               <Badge variant="secondary" size="sm" className="bg-white/20 text-white border-white/30">
                 TRANSPARANSI TABUNGAN NASABAH
               </Badge>
-              <span className="text-xs font-mono font-bold text-amber-300">NIK: {nasabah.nik}</span>
+              <span className="text-xs font-mono font-bold text-amber-300">NIK: {currentNasabah.nik}</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
               Selamat Datang, {profile.full_name}!
             </h1>
             <p className="text-xs md:text-sm text-pink-100">
-              {nasabah.dusun || 'Desa Rowotamtu'} • RT/RW {nasabah.rt_rw || '01/01'}
+              {currentNasabah.dusun || 'Desa Rowotamtu'} • RT/RW {currentNasabah.rt_rw || '01/01'}
             </p>
           </div>
         </div>

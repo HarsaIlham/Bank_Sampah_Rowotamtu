@@ -19,7 +19,20 @@ export const NasabahProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
-  if (!profile || !nasabah) return null;
+  if (!profile) return null;
+
+  const currentNasabah = nasabah || {
+    id: profile.id,
+    profile_id: profile.id,
+    member_number: 'BS-BARU',
+    nik: 'Nasabah',
+    address: 'Desa Rowotamtu',
+    rt_rw: '01/01',
+    dusun: 'Rowotamtu',
+    join_date: new Date().toISOString().split('T')[0],
+    status: 'active' as const,
+    created_at: new Date().toISOString()
+  };
 
   const handleLogout = async () => {
     try {
@@ -59,32 +72,42 @@ export const NasabahProfilePage: React.FC = () => {
       setSuccessMsg('Kata sandi berhasil diperbarui!');
       setNewPassword('');
       setConfirmPassword('');
-      confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+      confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 } });
     } catch (err: any) {
+      console.error('Error updating password:', err);
       setError(err.message || 'Gagal memperbarui kata sandi');
     } finally {
       setLoading(false);
     }
   };
 
+  const formatDateIndo = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6">
       
-      {/* Header with Logout Button */}
-      <div className="bg-white p-6 rounded-3xl border border-pink-100 shadow-xs flex items-center justify-between gap-4 flex-wrap">
+      {/* Header Profile Card */}
+      <div className="bg-white p-6 rounded-3xl border border-pink-100 shadow-xs flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <img
-            src={profile.photo_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Nasabah'}
-            alt={profile.full_name}
-            className="w-16 h-16 rounded-2xl border-2 border-pink-200 bg-pink-50 object-cover shrink-0"
-          />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-white text-2xl font-bold shadow-md shadow-pink-500/20">
+            {profile.full_name?.charAt(0).toUpperCase() || 'N'}
+          </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-extrabold text-slate-800">{profile.full_name}</h1>
-              <Badge variant="pink" size="sm">NIK: {nasabah.nik}</Badge>
+              <Badge variant="pink" size="sm">NASABAH AKTIF</Badge>
+              <span className="text-[11px] font-mono font-bold text-slate-400">ID: {currentNasabah.member_number || 'BS-BARU'}</span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Dusun {nasabah.dusun || 'Rowotamtu'} • RT/RW {nasabah.rt_rw || '01/01'}
+            <h1 className="text-xl font-extrabold text-slate-800 tracking-tight mt-1">
+              {profile.full_name}
+            </h1>
+            <p className="text-xs text-slate-500">
+              Terdaftar sejak {formatDateIndo(currentNasabah.join_date)}
             </p>
           </div>
         </div>
@@ -110,7 +133,7 @@ export const NasabahProfilePage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div className="space-y-1 bg-pink-50/50 p-3 rounded-xl border border-pink-100">
             <p className="text-[10px] text-slate-400 font-bold uppercase">NIK (NOMOR INDUK KEPENDUDUKAN)</p>
-            <p className="font-mono font-extrabold text-pink-600 text-sm">{nasabah.nik}</p>
+            <p className="font-mono font-extrabold text-pink-600 text-sm">{currentNasabah.nik}</p>
           </div>
 
           <div className="space-y-1 bg-pink-50/50 p-3 rounded-xl border border-pink-100">
@@ -123,7 +146,7 @@ export const NasabahProfilePage: React.FC = () => {
           <div className="sm:col-span-2 space-y-1 bg-pink-50/50 p-3 rounded-xl border border-pink-100">
             <p className="text-[10px] text-slate-400 font-bold uppercase">ALAMAT TERDAFTAR</p>
             <p className="font-semibold text-slate-800 text-xs flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-pink-500" /> {nasabah.address || '-'}
+              <MapPin className="w-3.5 h-3.5 text-pink-500" /> {currentNasabah.address || '-'}
             </p>
           </div>
         </div>

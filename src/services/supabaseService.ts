@@ -96,13 +96,34 @@ export const supabaseService = {
 
     // If nasabah, fetch nasabah record
     if (profile.role === 'nasabah') {
-      const { data: nasabah } = await supabase
+      let { data: nasabah } = await supabase
         .from('nasabah')
         .select('*')
         .eq('profile_id', profile.id)
-        .single();
+        .maybeSingle();
 
-      return { profile: profile as Profile, nasabah: nasabah as Nasabah || undefined };
+      // Auto-heal if nasabah row was not created previously
+      if (!nasabah) {
+        const rawNik = session.user.email ? session.user.email.split('@')[0] : '';
+        const { data: newNasabah } = await supabase
+          .from('nasabah')
+          .insert({
+            profile_id: profile.id,
+            nik: rawNik || `NIK-${profile.id.slice(0, 8)}`,
+            address: 'Desa Rowotamtu',
+            rt_rw: '01/01',
+            dusun: 'Rowotamtu',
+            status: 'active'
+          })
+          .select()
+          .maybeSingle();
+
+        if (newNasabah) {
+          nasabah = newNasabah;
+        }
+      }
+
+      return { profile: profile as Profile, nasabah: (nasabah as Nasabah) || undefined };
     }
 
     return { profile: profile as Profile };
