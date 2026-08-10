@@ -301,6 +301,7 @@ export const NIK_EMAIL_DOMAIN = '@resik.id';
 
 /** Convert NIK to Supabase Auth email format */
 export function nikToEmail(nik: string): string {
+  if (nik.includes('@')) return nik;
   return `${nik}${NIK_EMAIL_DOMAIN}`;
 }
 

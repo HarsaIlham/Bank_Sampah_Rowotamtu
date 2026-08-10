@@ -31,24 +31,38 @@ export const supabaseService = {
   // ==========================================================================
 
   /**
-   * Sign in using NIK and Password.
-   * Converts NIK to email format ({NIK}@banksampah.local) under the hood.
+   * Sign in using NIK / Email and Password.
+   * Supports raw email, current domain (@resik.id), and legacy seed domain (@banksampah.local).
    */
-  async signIn(nik: string, password: string) {
-    const email = nikToEmail(nik.trim());
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      if (error.message.includes('Invalid login credentials')) {
-        throw new Error('NIK atau kata sandi tidak sesuai');
-      }
-      throw error;
+  async signIn(identifier: string, password: string) {
+    const cleanId = identifier.trim();
+    
+    let emailsToTry: string[] = [];
+    if (cleanId.includes('@')) {
+      emailsToTry = [cleanId];
+    } else {
+      emailsToTry = [`${cleanId}@resik.id`, `${cleanId}@banksampah.local`];
     }
 
-    return data;
+    let lastError: any = null;
+    for (const email of emailsToTry) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (!error && data?.user) {
+        return data;
+      }
+      lastError = error;
+    }
+
+    if (lastError) {
+      if (lastError.message?.includes('Invalid login credentials')) {
+        throw new Error('NIK / Akun atau kata sandi tidak sesuai. Pastikan NIK dan kata sandi yang Anda masukkan sudah benar.');
+      }
+      throw lastError;
+    }
   },
 
   /** Sign out active session */
