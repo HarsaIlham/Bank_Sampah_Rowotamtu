@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
+import { Modal } from '../../components/ui/Modal';
+import { getSavedAccountsByRole, saveAccount, removeAccount } from '../../services/savedAccountsService';
+import type { SavedAccount } from '../../types';
 import logoBank from '../../assets/logo-bank.png';
 import bgImage from '../../assets/botol-di-tempat-sampah.jpg';
 import {
@@ -12,9 +15,11 @@ import {
   Eye,
   EyeOff,
   ShieldCheck,
-  Sparkles,
   AlertCircle,
   Building2,
+  Bookmark,
+  Trash2,
+  AlertTriangle,
 } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
@@ -27,15 +32,35 @@ export const LoginPage: React.FC = () => {
   const [nasabahNik, setNasabahNik] = useState('');
   const [nasabahPassword, setNasabahPassword] = useState('');
   const [showNasabahPass, setShowNasabahPass] = useState(false);
+  const [rememberNasabah, setRememberNasabah] = useState(true);
 
   // Form states for Admin
   const [adminIdentifier, setAdminIdentifier] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [showAdminPass, setShowAdminPass] = useState(false);
+  const [rememberAdmin, setRememberAdmin] = useState(true);
 
   // Feedback states
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Saved accounts
+  const [savedNasabah, setSavedNasabah] = useState<SavedAccount[]>([]);
+  const [savedAdmin, setSavedAdmin] = useState<SavedAccount[]>([]);
+
+  // Delete confirmation
+  const [accountToDelete, setAccountToDelete] = useState<SavedAccount | null>(null);
+
+  // Load saved accounts on mount
+  useEffect(() => {
+    setSavedNasabah(getSavedAccountsByRole('nasabah'));
+    setSavedAdmin(getSavedAccountsByRole('admin'));
+  }, []);
+
+  const refreshSavedAccounts = () => {
+    setSavedNasabah(getSavedAccountsByRole('nasabah'));
+    setSavedAdmin(getSavedAccountsByRole('admin'));
+  };
 
   const handleNasabahLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +80,20 @@ export const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await signIn(cleanNik, nasabahPassword);
+      const { profile, nasabah } = await signIn(cleanNik, nasabahPassword);
+
+      // Save account identity & password if checkbox is checked
+      if (rememberNasabah) {
+        saveAccount({
+          nik: cleanNik,
+          fullName: profile.full_name || 'Nasabah',
+          role: 'nasabah',
+          dusun: nasabah?.dusun || '',
+          password: nasabahPassword,
+          savedAt: new Date().toISOString()
+        });
+      }
+
       navigate('/nasabah');
     } catch (err: any) {
       console.error('Nasabah login error:', err);
@@ -83,7 +121,19 @@ export const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await signIn(cleanIdentifier, adminPassword);
+      const { profile } = await signIn(cleanIdentifier, adminPassword);
+
+      // Save account identity & password if checkbox is checked
+      if (rememberAdmin) {
+        saveAccount({
+          nik: cleanIdentifier,
+          fullName: profile.full_name || 'Pengurus',
+          role: 'admin',
+          password: adminPassword,
+          savedAt: new Date().toISOString()
+        });
+      }
+
       navigate('/admin');
     } catch (err: any) {
       console.error('Admin login error:', err);
@@ -92,6 +142,28 @@ export const LoginPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  const handleSelectSavedAccount = (account: SavedAccount) => {
+    if (account.role === 'nasabah') {
+      setNasabahNik(account.nik);
+      setNasabahPassword(account.password || '');
+      setActiveTab('nasabah');
+    } else {
+      setAdminIdentifier(account.nik);
+      setAdminPassword(account.password || '');
+      setActiveTab('admin');
+    }
+    setErrorMsg('');
+  };
+
+  const handleConfirmDelete = () => {
+    if (!accountToDelete) return;
+    removeAccount(accountToDelete.nik);
+    refreshSavedAccounts();
+    setAccountToDelete(null);
+  };
+
+  const currentSavedAccounts = activeTab === 'nasabah' ? savedNasabah : savedAdmin;
 
   return (
     <div className="relative w-full min-h-[calc(100vh-4.5rem)] px-4 py-8 md:py-12 flex items-center justify-center overflow-hidden">
@@ -202,10 +274,25 @@ export const LoginPage: React.FC = () => {
                     {showNasabahPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                <p className="text-[10px] text-pink-600 font-medium">
-                  *Default demo password: <span className="font-mono font-bold">123456</span>
-                </p>
               </div>
+
+              {/* Remember Account Checkbox */}
+              <label className="flex items-start gap-2.5 cursor-pointer select-none group">
+                <input
+                  type="checkbox"
+                  checked={rememberNasabah}
+                  onChange={e => setRememberNasabah(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded border-pink-300 text-pink-600 focus:ring-pink-400 cursor-pointer accent-pink-600"
+                />
+                <div>
+                  <p className="text-xs font-semibold text-slate-700 group-hover:text-pink-700 transition-colors">
+                    Ingat akun & kata sandi di perangkat ini
+                  </p>
+                  <p className="text-[10px] text-slate-400 leading-tight">
+                    Menyimpan NIK & PIN agar dapat masuk cepat di perangkat ini.
+                  </p>
+                </div>
+              </label>
 
               <Button
                 type="submit"
@@ -217,38 +304,13 @@ export const LoginPage: React.FC = () => {
                 {isLoading ? 'Memverifikasi Data...' : 'Masuk ke Akun Nasabah →'}
               </Button>
 
-              {/* Quick Fill Demo Section */}
-              <div className="pt-4 border-t border-slate-100 space-y-2.5">
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center flex items-center justify-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Pilihan Uji Coba Cepat (Akun Demo):
-                </p>
-                <div className="space-y-1.5">
-                  {[
-                    { name: 'Ibu Siti Aminah', nik: '3213015408850001', dusun: 'Paseban' },
-                    { name: 'Pak Budi Santoso', nik: '3213011204780002', dusun: 'Glagasan' },
-                    { name: 'Teh Rina Karlina', nik: '3213012109920003', dusun: 'Karanganyar' }
-                  ].map(nasabah => (
-                    <button
-                      key={nasabah.nik}
-                      type="button"
-                      onClick={() => {
-                        setNasabahNik(nasabah.nik);
-                        setNasabahPassword('123456');
-                        setErrorMsg('');
-                      }}
-                      className="w-full text-left p-2.5 rounded-xl bg-pink-50/60 hover:bg-pink-100/70 border border-pink-100 transition-colors flex items-center justify-between text-xs cursor-pointer group"
-                    >
-                      <div>
-                        <p className="font-bold text-slate-800 group-hover:text-pink-700">{nasabah.name}</p>
-                        <p className="text-[10px] text-slate-500 font-mono">NIK: {nasabah.nik} • {nasabah.dusun}</p>
-                      </div>
-                      <span className="text-[10px] font-bold text-pink-600 bg-white px-2 py-0.5 rounded-md border border-pink-200">
-                        Pilih
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+              {/* Saved Accounts Section — Nasabah */}
+              <SavedAccountsSection
+                accounts={currentSavedAccounts}
+                onSelect={handleSelectSavedAccount}
+                onDelete={setAccountToDelete}
+                roleLabel="Nasabah"
+              />
             </form>
           )}
 
@@ -301,6 +363,24 @@ export const LoginPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Remember Account Checkbox */}
+              <label className="flex items-start gap-2.5 cursor-pointer select-none group">
+                <input
+                  type="checkbox"
+                  checked={rememberAdmin}
+                  onChange={e => setRememberAdmin(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded border-slate-300 text-slate-800 focus:ring-slate-600 cursor-pointer accent-slate-800"
+                />
+                <div>
+                  <p className="text-xs font-semibold text-slate-700 group-hover:text-slate-900 transition-colors">
+                    Ingat akun & kata sandi di perangkat ini
+                  </p>
+                  <p className="text-[10px] text-slate-400 leading-tight">
+                    Menyimpan NIK & password agar dapat masuk cepat di perangkat ini.
+                  </p>
+                </div>
+              </label>
+
               <button
                 type="submit"
                 disabled={isLoading}
@@ -309,26 +389,13 @@ export const LoginPage: React.FC = () => {
                 {isLoading ? 'Memverifikasi Pengurus...' : 'Masuk ke Panel Admin →'}
               </button>
 
-              {/* Admin Quick Fill */}
-              <div className="pt-4 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAdminIdentifier('3213010101950001');
-                    setAdminPassword('123456');
-                    setErrorMsg('');
-                  }}
-                  className="w-full text-left p-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors flex items-center justify-between text-xs cursor-pointer"
-                >
-                  <div>
-                    <p className="font-bold text-slate-900">Pengurus KKN-K ROWOTAMTU</p>
-                    <p className="text-[10px] text-slate-500 font-mono">NIK Admin: 3213010101950001</p>
-                  </div>
-                  <span className="text-[10px] font-bold text-slate-800 bg-white px-2 py-0.5 rounded-md border border-slate-300">
-                    Isi Otomatis
-                  </span>
-                </button>
-              </div>
+              {/* Saved Accounts Section — Admin */}
+              <SavedAccountsSection
+                accounts={currentSavedAccounts}
+                onSelect={handleSelectSavedAccount}
+                onDelete={setAccountToDelete}
+                roleLabel="Pengurus"
+              />
             </form>
           )}
 
@@ -350,6 +417,140 @@ export const LoginPage: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={Boolean(accountToDelete)}
+        onClose={() => setAccountToDelete(null)}
+        title="Hapus Akun Tersimpan?"
+        description="Akun ini akan dihapus dari daftar akun tersimpan di perangkat ini."
+        maxWidth="sm"
+      >
+        {accountToDelete && (
+          <div className="space-y-4">
+            <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5 text-xs">
+              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-bold text-slate-800">
+                  {accountToDelete.fullName}
+                </p>
+                <p className="text-slate-500 font-mono text-[11px]">
+                  NIK: {accountToDelete.nik}
+                  {accountToDelete.dusun && ` • ${accountToDelete.dusun}`}
+                </p>
+                <p className="text-amber-700 font-medium mt-1">
+                  Akun ini hanya akan dihapus dari daftar cepat login perangkat ini. Akun database Anda tetap aman.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5 pt-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setAccountToDelete(null)}
+              >
+                Batal
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleConfirmDelete}
+                className="bg-rose-600 hover:bg-rose-700 shadow-rose-200"
+                icon={<Trash2 className="w-3.5 h-3.5" />}
+              >
+                Hapus dari Perangkat
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+    </div>
+  );
+};
+
+// ============================================================================
+// Saved Accounts Section (extracted sub-component)
+// ============================================================================
+
+interface SavedAccountsSectionProps {
+  accounts: SavedAccount[];
+  onSelect: (account: SavedAccount) => void;
+  onDelete: (account: SavedAccount) => void;
+  roleLabel: string;
+}
+
+const SavedAccountsSection: React.FC<SavedAccountsSectionProps> = ({
+  accounts,
+  onSelect,
+  onDelete,
+  roleLabel
+}) => {
+  return (
+    <div className="pt-4 border-t border-slate-100 space-y-2.5">
+      <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center flex items-center justify-center gap-1.5">
+        <Bookmark className="w-3.5 h-3.5 text-pink-500" /> Akun {roleLabel} Tersimpan di Perangkat Ini
+      </p>
+
+      {accounts.length > 0 ? (
+        <div className="space-y-1.5">
+          {accounts.map(account => (
+            <div
+              key={account.nik}
+              className="w-full p-2.5 rounded-xl bg-pink-50/60 hover:bg-pink-100/70 border border-pink-100 transition-colors flex items-center justify-between text-xs group"
+            >
+              <button
+                type="button"
+                onClick={() => onSelect(account)}
+                className="flex-1 text-left cursor-pointer"
+              >
+                <div className="flex items-center gap-1.5">
+                  <p className="font-bold text-slate-800 group-hover:text-pink-700 transition-colors">
+                    {account.fullName}
+                  </p>
+                  {account.password && (
+                    <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100/80 px-1.5 py-0.2 rounded">
+                      PIN Siap
+                    </span>
+                  )}
+                </div>
+                <p className="text-[10px] text-slate-500 font-mono">
+                  NIK: {account.nik}
+                  {account.dusun && ` • ${account.dusun}`}
+                </p>
+              </button>
+
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(account);
+                  }}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                  title="Hapus akun tersimpan"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+                <span
+                  onClick={() => onSelect(account)}
+                  className="text-[10px] font-bold text-pink-600 bg-white px-2 py-0.5 rounded-md border border-pink-200 cursor-pointer hover:bg-pink-50 transition-colors"
+                >
+                  Pilih
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-3 px-4 rounded-xl bg-slate-50/60 border border-slate-100">
+          <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
+            Belum ada akun tersimpan.
+            <br />
+            Centang <strong>"Ingat akun & kata sandi"</strong> saat login untuk menyimpan akun Anda di perangkat ini.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

@@ -10,7 +10,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAdmin: boolean;
   isNasabah: boolean;
-  signIn: (nik: string, pass: string) => Promise<void>;
+  signIn: (nik: string, pass: string) => Promise<{ profile: Profile; nasabah?: Nasabah }>;
   signOut: () => Promise<void>;
   refreshUserData: () => Promise<void>;
 }
@@ -68,9 +68,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  const signIn = async (nik: string, pass: string) => {
+  const signIn = async (nik: string, pass: string): Promise<{ profile: Profile; nasabah?: Nasabah }> => {
     await supabaseService.signIn(nik, pass);
     await loadUser();
+
+    // Return the freshly loaded profile data for the caller
+    const data = await supabaseService.getCurrentProfile();
+    if (!data) throw new Error('Login berhasil tapi data profil tidak ditemukan.');
+    return { profile: data.profile, nasabah: data.nasabah };
   };
 
   const signOut = async () => {

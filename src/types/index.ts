@@ -249,12 +249,28 @@ export interface BankSampahReports {
 // EDUCATIONAL ARTICLES (static/CMS content — not in Supabase yet)
 // ============================================================================
 
+export interface ArticleSectionItem {
+  title?: string;
+  desc: string;
+  badge?: string;
+}
+
+export interface ArticleSection {
+  title?: string;
+  body?: string;
+  isCallout?: boolean;
+  isSteps?: boolean;
+  items?: ArticleSectionItem[];
+}
+
 export interface EducationalArticle {
   id: string;
   title: string;
-  category: 'Edukasi' | 'Panduan' | 'Berita KKN' | 'Tips Lingkungan';
+  category: 'Edukasi Dasar' | 'Tentang Bank Sampah' | 'Tips 3R' | 'Panduan Menabung' | 'Motivasi';
   summary: string;
   content: string;
+  sections?: ArticleSection[];
+  takeaway?: string;
   author: string;
   date: string;
   readTime: string;
@@ -323,6 +339,20 @@ export const DUSUN_ROWOTAMTU = [
 ] as const;
 
 export type DusunRowotamtu = typeof DUSUN_ROWOTAMTU[number];
+
+// ============================================================================
+// SAVED ACCOUNTS (localStorage — login page quick-fill)
+// ============================================================================
+
+/** Account identity saved to localStorage for quick-fill on login page. */
+export interface SavedAccount {
+  nik: string;
+  fullName: string;
+  role: 'nasabah' | 'admin';
+  dusun?: string;
+  password?: string;
+  savedAt: string;        // ISO timestamp
+}
 
 // ============================================================================
 // BACKWARD COMPATIBILITY ALIASES (temporary for seamless phase migration)

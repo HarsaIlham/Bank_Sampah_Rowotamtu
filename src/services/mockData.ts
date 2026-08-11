@@ -188,26 +188,280 @@ export const INITIAL_WITHDRAWALS: WithdrawalTransaction[] = [
 export const INITIAL_ARTICLES: EducationalArticle[] = [
   {
     id: 'art-1',
-    title: 'Cara Mudah Memilah Sampah Rumah Tangga di Desa Rowotamtu',
-    category: 'Panduan',
-    summary: 'Langkah praktis memisahkan sampah organik, anorganik, dan B3 dari dapur rumah tangga untuk disetor ke Bank Sampah.',
-    content: `Memilah sampah dari rumah merupakan langkah paling krusial untuk mensukseskan program Bank Sampah Desa Rowotamtu.\n\n### 3 Kelompok Utama Pemilahan:\n1. **Plastik Bening & Keras**: Cuci bersih botol plastik dan remukkan agar tidak memakan tempat.\n2. **Kertas & Kardus**: Pastikan tetap dalam keadaan kering dan diikat rapi.\n3. **Minyak Jelantah**: Simpan di botol bekas untuk disetor menjadi bahan daur ulang.`,
+    title: 'Kenalan Dulu, Yuk: Sebenarnya Sampah Itu Apa?',
+    category: 'Edukasi Dasar',
+    summary: 'Setiap hari kita menghasilkan sisa makanan, kemasan jajan, hingga botol plastik. Memahami jenis dan asal sampah adalah langkah awal menuju lingkungan desa yang bersih dan bernilai ekonomi.',
+    content: 'Setiap hari kita menghasilkan sampah dari sisa makanan, bungkus jajan, sampai botol minum. Mengenal jenis dan asal sampah adalah langkah pertama sebelum kita bisa mengelolanya dengan benar. Sampah organik dan anorganik yang tercampur jadi sulit diolah, padahal kalau dipisah dari awal, keduanya sama-sama memiliki manfaat dan nilai ekonomi.',
+    sections: [
+      {
+        title: 'Apa Itu Sampah?',
+        body: 'Sampah adalah bagian dari sesuatu yang sudah tidak dipakai atau tidak diinginkan lagi, dan biasanya dibuang dari kegiatan rumah tangga, perdagangan, industri, sampai pertanian. Sederhananya: apa pun yang sudah selesai masa pakainya di tangan kita.'
+      },
+      {
+        title: 'Tiga Jenis Sampah yang Perlu Diketahui',
+        items: [
+          {
+            title: 'Sampah Organik',
+            desc: 'Sisa makanan, guguran daun, dan bahan alami lain yang mudah terurai oleh alam. Sangat baik diolah menjadi pupuk kompos untuk tanaman pekarangan.',
+            badge: 'Organik'
+          },
+          {
+            title: 'Sampah Anorganik',
+            desc: 'Plastik, kaleng, botol kaca, dan styrofoam. Bahan ini sulit terurai secara alami, tetapi memiliki nilai jual tinggi jika disetorkan ke bank sampah.',
+            badge: 'Bernilai Jual'
+          },
+          {
+            title: 'Sampah B3 (Bahan Berbahaya & Beracun)',
+            desc: 'Limbah berbahaya seperti bekas obat, baterai, wadah pestisida, atau limbah industri yang membutuhkan penanganan khusus dan tidak boleh dicampur sembarangan.',
+            badge: 'Penanganan Khusus'
+          }
+        ]
+      },
+      {
+        title: 'Dari Mana Asal Sampah?',
+        items: [
+          {
+            title: 'Sampah Domestik',
+            desc: 'Dihasilkan langsung dari aktivitas harian rumah tangga dan lingkungan permukiman warga.'
+          },
+          {
+            title: 'Sampah Non-Domestik',
+            desc: 'Berasal dari perkantoran, warung, restoran, kawasan pariwisata, industri, serta area pertanian.'
+          }
+        ]
+      }
+    ],
+    takeaway: 'Mengenal jenis dan asal sampah adalah langkah pertama sebelum kita bisa mengelolanya dengan benar. Sampah organik dan anorganik yang tercampur akan sulit diolah, padahal jika dipisah sejak dari rumah, keduanya sama-sama memiliki manfaat dan bernilai ekonomi.',
     author: 'Tim KKN-K ROWOTAMTU',
-    date: '2026-07-25',
-    readTime: '3 mnt baca',
+    date: '2026-08-01',
+    readTime: '3 menit baca',
     imageUrl: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=600',
-    tags: ['Edukasi', 'Pemilahan', 'Lingkungan']
+    tags: ['EdukasiDasar', 'JenisSampah', 'DesaRowotamtu']
   },
   {
     id: 'art-2',
-    title: 'Transformasi Sampah Jadi Tabungan: Dampak Positif untuk Ekonomi Warga',
-    category: 'Berita KKN',
-    summary: 'Bagaimana program Bank Sampah KKN-K ROWOTAMTU membantu puluhan kepala keluarga menambah penghasilan harian dengan membawa sampah langsung ke Posko.',
-    content: `Melalui pencatatan digital Bank Sampah Desa Rowotamtu, setiap warga kini dapat memantau saldo tabungan sampah mereka secara transparan saat menyetorkan sampah di Posko Utama Balai Desa.`,
-    author: 'Mahasiswa KKN-K ROWOTAMTU',
-    date: '2026-07-30',
-    readTime: '4 mnt baca',
-    imageUrl: 'https://media.istockphoto.com/id/2219166847/id/foto/simbol-daur-ulang-hijau-pada-peningkatan-penumpukan-koin-dan-grafik-keuangan-untuk-mengurangi.webp?a=1&b=1&s=612x612&w=0&k=20&c=OItubMT_xvG2AV0uRrn3Qzd6IRaO-asxBTiesv8hkmE=',
-    tags: ['EkonomiKreatif', 'KKNKRowotamtu', 'TabunganSampah']
+    title: 'Kenapa Sih Harus Ada Bank Sampah?',
+    category: 'Tentang Bank Sampah',
+    summary: 'Pernah mendengar istilah bank sampah tapi masih bingung apa bedanya dengan tempat sampah biasa? Yuk pelajari definisi, manfaat, dan cara pandang baru dalam mengelola sampah.',
+    content: 'Bank sampah bukan sekadar tempat pembuangan, melainkan sistem pengelolaan sampah berbasis masyarakat yang memberikan nilai ekonomi langsung dari sampah yang dipilah.',
+    sections: [
+      {
+        title: 'Definisi Resmi Bank Sampah',
+        isCallout: true,
+        body: 'Menurut Peraturan Menteri Lingkungan Hidup RI No. 13 Tahun 2012, Bank Sampah adalah tempat pemilahan dan pengumpulan sampah yang dapat didaur ulang dan/atau digunakan ulang, serta memiliki nilai ekonomi bagi masyarakat.'
+      },
+      {
+        title: 'Tujuan Dibentuknya Bank Sampah',
+        body: 'Tujuannya agar pengelolaan sampah dimulai langsung dari sumbernya melalui prinsip 3R (Reduce, Reuse, Recycle). Sampah yang masih bernilai dapat ditabung atau disetorkan ke bank sampah untuk menambah pendapatan keluarga warga desa.'
+      },
+      {
+        title: 'Manfaat Nyata untuk Warga Desa Rowotamtu',
+        items: [
+          { desc: 'Mengurangi pencemaran lingkungan dan bau tidak sedap di sekitar tempat tinggal.' },
+          { desc: 'Mengurangi timbunan volume sampah yang harus dibuang ke Tempat Pemrosesan Akhir (TPA).' },
+          { desc: 'Menciptakan lingkungan desa yang bersih, asri, dan sehat untuk keluarga.' },
+          { desc: 'Mendidik masyarakat agar lebih peduli dan bertanggung jawab atas sampah yang dihasilkan.' },
+          { desc: 'Meningkatkan rasa gotong royong serta menambah saldo tabungan kas keluarga.' }
+        ]
+      },
+      {
+        title: 'Perubahan Cara Pandang Pengelolaan Sampah',
+        isSteps: true,
+        items: [
+          {
+            title: 'Paradigma Lama: Kumpul – Angkut – Buang',
+            desc: 'Sampah dicampur, diangkut petugas ke TPS, lalu dibuang begitu saja ke TPA tanpa proses pengolahan.'
+          },
+          {
+            title: 'Paradigma Baru: Kurangi – Pilah – Olah Jadi Berkah',
+            desc: 'Sampah dipilah sejak dari rumah tangga sebelum disetorkan ke posko bank sampah. Jauh lebih ramah lingkungan dan menghasilkan pemasukan nyata.'
+          }
+        ]
+      }
+    ],
+    takeaway: 'Bank sampah adalah cara kita mengubah kebiasaan lama "buang lalu lupa" menjadi kebiasaan baru "pilah, kelola, dan dapat manfaat". Ini bukan hanya soal menjaga kebersihan lingkungan, melainkan juga tentang menumbuhkan perekonomian keluarga secara mandiri.',
+    author: 'Tim KKN-K ROWOTAMTU',
+    date: '2026-08-03',
+    readTime: '3 menit baca',
+    imageUrl: 'https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?auto=format&fit=crop&q=80&w=600',
+    tags: ['TentangBankSampah', 'ParadigmaBaru', 'ManfaatWarga']
+  },
+  {
+    id: 'art-3',
+    title: 'Kenalan dengan Prinsip 3R (Reduce, Reuse, Recycle)',
+    category: 'Tips 3R',
+    summary: 'Tiga prinsip sederhana yang dapat dipraktikkan langsung di rumah untuk mengurangi volume sampah dan menghemat pengeluaran keluarga.',
+    content: 'Sebelum sampah sampai ke bank sampah, ada satu prinsip dasar yang perlu kita kuasai bersama: 3R. Tiga langkah ini saling melengkapi untuk menciptakan lingkungan yang lestari.',
+    sections: [
+      {
+        title: 'Tiga Pilar Utama Prinsip 3R',
+        items: [
+          {
+            title: '1. REDUCE (Mengurangi)',
+            desc: 'Langkah pencegahan sejak awal. Contoh: membawa tas belanja sendiri saat ke pasar, memilih produk kemasan isi ulang, dan menghindari penggunaan plastik sekali pakai.',
+            badge: 'Pencegahan'
+          },
+          {
+            title: '2. REUSE (Menggunakan Kembali)',
+            desc: 'Memaksimalkan masa pakai barang. Contoh: menggunakan toples kaca untuk tempat bumbu dapur, memakai botol minum yang bisa diisi ulang, dan memanfaatkan kertas bekas untuk catatan.',
+            badge: 'Gunakan Lagi'
+          },
+          {
+            title: '3. RECYCLE (Mendaur Ulang)',
+            desc: 'Mengubah barang bekas menjadi produk baru yang berguna. Contoh: menyetorkan kardus, kaleng, dan botol plastik ke Bank Sampah Desa Rowotamtu untuk diproses industri daur ulang.',
+            badge: 'Daur Ulang'
+          }
+        ]
+      },
+      {
+        title: 'Keuntungan Memilah Sampah dari Rumah',
+        body: 'Jika sampah sudah dipisahkan dari dapur, pengelolaannya jauh lebih optimal. Sampah organik dapat diolah menjadi kompos alami, sedangkan sampah anorganik disetorkan ke bank sampah untuk menambah saldo tabungan kas digital.'
+      }
+    ],
+    takeaway: 'Prinsip 3R bukanlah teori yang rumit, melainkan kebiasaan kecil yang bisa langsung dipraktikkan hari ini. Mulailah dari memilah dua wadah sederhana di rumah: satu untuk organik (sisa makanan) dan satu untuk anorganik (plastik, kertas, kaleng).',
+    author: 'Tim KKN-K ROWOTAMTU',
+    date: '2026-08-05',
+    readTime: '3 menit baca',
+    imageUrl: 'https://images.unsplash.com/photo-1604187351574-c75ca79f5807?auto=format&fit=crop&q=80&w=600',
+    tags: ['Tips3R', 'Reduce', 'Reuse', 'Recycle']
+  },
+  {
+    id: 'art-4',
+    title: 'Sampah Apa Saja yang Bisa Ditabung?',
+    category: 'Panduan Menabung',
+    summary: 'Panduan lengkap mengenai kategori sampah yang diterima di Posko Bank Sampah Desa Rowotamtu serta peran pengurus posko dalam melayani nasabah.',
+    content: 'Tidak semua sampah dibuang begitu saja. Sebagian besar sampah anorganik memiliki nilai rupiah yang jelas dan siap diterima di Posko Bank Sampah Desa Rowotamtu.',
+    sections: [
+      {
+        title: '4 Kategori Sampah yang Diterima di Posko',
+        items: [
+          {
+            title: 'Kategori Plastik',
+            desc: 'Botol air mineral PET bening, gelas plastik minuman, ember bekas, gayung, baskom pecah, dan perabotan plastik keras lainnya.',
+            badge: 'Plastik'
+          },
+          {
+            title: 'Kategori Besi & Logam',
+            desc: 'Kaleng minuman alumunium, kaleng biskuit/susu kental manis, potongan pipa besi, seng bekas, paku, dan kawat.',
+            badge: 'Logam'
+          },
+          {
+            title: 'Kategori Kertas & Kardus',
+            desc: 'Kardus cokelat bergelombang, kertas HVS bekas cetak, buku tulis/pelajaran lama, koran, dan majalah.',
+            badge: 'Kertas'
+          },
+          {
+            title: 'Kategori Botol Kaca',
+            desc: 'Botol kaca bening utuh, botol sirup, botol kecap, dan toples kaca dalam kondisi bersih serta tidak pecah.',
+            badge: 'Kaca'
+          }
+        ]
+      },
+      {
+        title: 'Struktur Pengurus Posko Bank Sampah',
+        isSteps: true,
+        items: [
+          {
+            title: '1. Ketua & Pengarah',
+            desc: 'Mengawasi jalannya operasional, menyusun program kerja, dan bertanggung jawab atas kelancaran posko.'
+          },
+          {
+            title: '2. Administrasi & Teller',
+            desc: 'Melayani pendaftaran nasabah baru, menginput data timbangan, dan mencatat transaksi ke buku kas digital.'
+          },
+          {
+            title: '3. Bendahara',
+            desc: 'Mengelola laporan keuangan posko dan memproses permohonan penarikan saldo tunai nasabah.'
+          },
+          {
+            title: '4. Pengepul',
+            desc: 'mengambil, menimbang, dan mencatat sampah dari nasabah.'
+          }
+        ]
+      }
+    ],
+    takeaway: 'Sebelum membawa sampah ke posko, pastikan sampah sudah dipilah sesuai 4 kategori di atas serta dalam keadaan bersih dan kering. Semakin rapi pilahan Anda, semakin cepat proses penimbangan dan pencatatannya.',
+    author: 'Tim KKN-K ROWOTAMTU',
+    date: '2026-08-07',
+    readTime: '3 menit baca',
+    imageUrl: "../assets/waste_bank.avif",
+    tags: ['PanduanMenabung', 'KategoriSampah', 'BankSampah']
+  },
+  {
+    id: 'art-5',
+    title: 'Cara Menabung Sampah, Gampang Kok!',
+    category: 'Panduan Menabung',
+    summary: 'Masih bingung alur menyetorkan sampah di Posko Balai Desa? Simak 5 langkah praktis dari pemilahan di rumah sampai saldo masuk ke akun digital.',
+    content: 'Menabung sampah di Bank Sampah Desa Rowotamtu sangat mudah dan mirip seperti menabung di bank konvensional, hanya saja yang disetorkan berupa sampah terpilah.',
+    sections: [
+      {
+        title: 'Lima Langkah Praktis Menabung Sampah',
+        isSteps: true,
+        items: [
+          {
+            title: 'Langkah 1: Pemilahan Mandiri di Rumah',
+            desc: 'Kumpulkan dan pisahkan sampah anorganik (plastik, kertas, kaleng, botol kaca) ke dalam wadah atau kantong terpisah.'
+          },
+          {
+            title: 'Langkah 2: Datang ke Posko Balai Desa',
+            desc: 'Bawa sampah terpilah ke Posko Utama Balai Desa Rowotamtu pada jadwal penimbangan dan isi daftar absensi nasabah.'
+          },
+          {
+            title: 'Langkah 3: Penimbangan Akurat',
+            desc: 'Petugas posko akan menimbang masing-masing jenis sampah menggunakan timbangan digital secara transparan.'
+          },
+          {
+            title: 'Langkah 4: Pencatatan ke Buku Kas Digital',
+            desc: 'Petugas teller menginput hasil timbangan dan nilai rupiah langsung masuk ke buku tabungan digital akun Anda.'
+          },
+          {
+            title: 'Langkah 5: Saldo Bertambah & Siap Ditarik',
+            desc: 'Nasabah menerima konfirmasi saldo bertambah yang dapat dipantau setiap saat dan ditarik tunai ketika dibutuhkan.'
+          }
+        ]
+      }
+    ],
+    takeaway: 'Semakin rutin Anda menabung sampah, saldo kas digital Anda akan terus bertambah. Selain menciptakan lingkungan desa yang bersih dan sehat, hasilnya dapat menjadi tambahan penghasilan nyata bagi keluarga.',
+    author: 'Tim KKN-K ROWOTAMTU',
+    date: '2026-08-09',
+    readTime: '4 menit baca',
+    imageUrl: '../assets/simulasi_bank_sampah.avif',
+    tags: ['PanduanMenabung', 'CaraSetor', 'TabunganDigital']
+  },
+  {
+    id: 'art-6',
+    title: 'Dari Sampah, Sekarang Jadi Berkah',
+    category: 'Motivasi',
+    summary: 'Dulu sampah hanya dianggap sebagai barang buangan yang mengotori desa. Kini dengan bank sampah, sampah berubah menjadi tabungan dan berkah ekonomi bagi seluruh warga.',
+    content: 'Transformasi pola pikir dari sekadar membuang sampah menjadi mengelola sampah terbukti mampu memberikan dampak ekonomi nyata sekaligus menjaga kelestarian Desa Rowotamtu.',
+    sections: [
+      {
+        title: 'Mengubah Masalah Menjadi Berkah Bersama',
+        body: 'Dulu sampah kerap menumpuk di pekarangan atau selokan hingga menimbulkan banjir dan sarang penyakit. Kini melalui program Bank Sampah Desa Rowotamtu, setiap kilogram sampah terpilah memiliki nilai tukar rupiah yang dapat dicairkan langsung oleh warga.'
+      },
+      {
+        title: 'Tiga Langkah Nyata Menjadi Warga Peduli Lingkungan',
+        items: [
+          {
+            title: 'Pilah Sampah Sejak dari Dapur',
+            desc: 'Pisahkan sampah yang bisa didaur ulang segera setelah selesai digunakan di rumah.'
+          },
+          {
+            title: 'Terapkan Gaya Hidup 3R Setiap Hari',
+            desc: 'Kurangi kantong kresek sekali pakai dan rawat barang-barang agar memiliki masa pakai lebih lama.'
+          },
+          {
+            title: 'Rutin Menabung ke Posko Desa',
+            desc: 'Ajak keluarga dan tetangga di dusun untuk bersama-sama menyetorkan sampah ke posko setiap pekan.'
+          }
+        ]
+      }
+    ],
+    takeaway: 'Bank Sampah Desa Rowotamtu hadir untuk membuktikan bahwa dari sampah bisa lahir berkah. Perubahan besar selalu berawal dari kebiasaan kecil di rumah. Mari bersama-sama kita wujudkan Desa Rowotamtu yang bersih, sehat, hijau, dan sejahtera!',
+    author: 'Tim KKN-K ROWOTAMTU',
+    date: '2026-08-11',
+    readTime: '2 menit baca',
+    imageUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=600',
+    tags: ['Motivasi', 'SampahJadiBerkah', 'RowotamtuBersih']
   }
 ];

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -42,13 +43,17 @@ export const Modal: React.FC<ModalProps> = ({
     xl: 'max-w-xl'
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+  const modalContent = (
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      onClick={onClose}
+    >
       <div 
         className={cn(
-          'w-full bg-white rounded-2xl shadow-xl border border-pink-100 overflow-hidden transform transition-all duration-200 animate-in zoom-in-95',
+          'w-full bg-white rounded-2xl shadow-xl border border-pink-100 overflow-hidden transform transition-all duration-200 animate-in zoom-in-95 my-auto',
           maxWidths[maxWidth]
         )}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
         <div className="flex items-start justify-between p-5 border-b border-pink-100/70 bg-gradient-to-r from-[#FFF7FB] to-pink-50/50">
@@ -58,7 +63,7 @@ export const Modal: React.FC<ModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-pink-600 p-1.5 rounded-lg hover:bg-pink-100/50 transition-colors"
+            className="text-slate-400 hover:text-pink-600 p-1.5 rounded-lg hover:bg-pink-100/50 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -71,4 +76,6 @@ export const Modal: React.FC<ModalProps> = ({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };

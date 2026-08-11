@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { LogOut, X } from 'lucide-react';
 import { Button } from '../ui/Button';
 
@@ -19,6 +20,20 @@ export const ConfirmLogoutModal: React.FC<ConfirmLogoutModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !loading) onClose();
+    };
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose, loading]);
+
   if (!isOpen) return null;
 
   const handleConfirm = async () => {
@@ -33,10 +48,15 @@ export const ConfirmLogoutModal: React.FC<ConfirmLogoutModalProps> = ({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border border-pink-100 overflow-hidden transform transition-all duration-200 animate-in zoom-in-95 p-6 space-y-5">
-        
+  const modalContent = (
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div 
+        className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border border-pink-100 overflow-hidden transform transition-all duration-200 animate-in zoom-in-95 p-6 space-y-5 my-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header Icon & Close */}
         <div className="flex items-start justify-between">
           <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center shadow-inner">
@@ -85,8 +105,9 @@ export const ConfirmLogoutModal: React.FC<ConfirmLogoutModalProps> = ({
             {loading ? 'Mengeluarkan...' : 'Ya, Keluar Akun'}
           </Button>
         </div>
-
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };

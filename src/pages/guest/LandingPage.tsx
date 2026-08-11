@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useReports, useWasteTypes } from '../../hooks/useAppQueries';
 import { supabaseService } from '../../services/supabaseService';
 import type { EducationalArticle } from '../../types';
-import { formatRupiah, formatWeight } from '../../lib/utils';
+import { formatRupiah, formatWeight, resolveImageUrl } from '../../lib/utils';
 import { StatCard } from '../../components/ui/StatCard';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -30,7 +30,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) =>
   const { data: reports = null } = useReports();
   const { data: allWasteTypes = [] } = useWasteTypes();
   const wasteTypes = allWasteTypes.slice(0, 4);
-  const articles: EducationalArticle[] = supabaseService.getArticles().slice(0, 2);
+  const articles: EducationalArticle[] = supabaseService.getArticles().slice(0, 3);
 
   return (
     <div className="space-y-12">
@@ -251,21 +251,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) =>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {articles.map(art => (
             <Card
               key={art.id}
               hoverable
               onClick={() => navigate(`/edukasi/${art.id}`)}
-              className="p-4 flex flex-col sm:flex-row gap-4 border-pink-100 cursor-pointer"
+              className="overflow-hidden border-pink-100 cursor-pointer flex flex-col justify-between"
             >
-              <img
-                src={art.imageUrl}
-                alt={art.title}
-                className="w-full sm:w-36 h-32 object-cover rounded-xl shrink-0"
-              />
-              <div className="space-y-2 flex-1 flex flex-col justify-between">
-                <div className="space-y-1">
+              <div>
+                <img
+                  src={resolveImageUrl(art.imageUrl)}
+                  alt={art.title}
+                  className="w-full h-40 object-cover"
+                />
+                <div className="p-4 space-y-2">
                   <div className="flex items-center gap-2">
                     <Badge variant="pink" size="sm">{art.category}</Badge>
                     <span className="text-[10px] text-slate-400 flex items-center gap-1">
@@ -273,8 +273,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) =>
                     </span>
                   </div>
                   <h3 className="font-bold text-slate-800 text-sm line-clamp-2">{art.title}</h3>
+                  <p className="text-xs text-slate-500 line-clamp-2">{art.summary}</p>
                 </div>
-                <p className="text-xs text-slate-500 line-clamp-2">{art.summary}</p>
+              </div>
+              <div className="px-4 pb-4 pt-1">
+                <span className="text-xs font-bold text-pink-600 flex items-center gap-1">
+                  Baca Artikel →
+                </span>
               </div>
             </Card>
           ))}
