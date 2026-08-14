@@ -31,11 +31,11 @@ export const LoginPage: React.FC = () => {
   // Demo account for presentation — edit credentials here
   // ──────────────────────────────────────────────────────────
   const DEMO_NASABAH: SavedAccount = {
-    nik: '3509021234560001',         // ← Ganti dengan NIK nasabah demo
-    fullName: 'Ratna (Demo Warga)',  // ← Ganti nama nasabah demo
+    nik: '3509121002050002',         // ← Ganti dengan NIK nasabah demo
+    fullName: 'Harsa (Demo Warga)',  // ← Ganti nama nasabah demo
     role: 'nasabah',
     dusun: 'Dusun Krajan',
-    password: 'nasabah123',          // ← Ganti password nasabah demo
+    password: '123456',          // ← Ganti password nasabah demo
     savedAt: new Date().toISOString()
   };
   // ──────────────────────────────────────────────────────────
