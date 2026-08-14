@@ -20,11 +20,25 @@ import {
   Bookmark,
   Trash2,
   AlertTriangle,
+  Sparkles,
 } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { signIn } = useAuth();
+
+  // ──────────────────────────────────────────────────────────
+  // Demo account for presentation — edit credentials here
+  // ──────────────────────────────────────────────────────────
+  const DEMO_NASABAH: SavedAccount = {
+    nik: '3509021234560001',         // ← Ganti dengan NIK nasabah demo
+    fullName: 'Ratna (Demo Warga)',  // ← Ganti nama nasabah demo
+    role: 'nasabah',
+    dusun: 'Dusun Krajan',
+    password: 'nasabah123',          // ← Ganti password nasabah demo
+    savedAt: new Date().toISOString()
+  };
+  // ──────────────────────────────────────────────────────────
 
   const [activeTab, setActiveTab] = useState<'nasabah' | 'admin'>('nasabah');
 
@@ -310,6 +324,7 @@ export const LoginPage: React.FC = () => {
                 onSelect={handleSelectSavedAccount}
                 onDelete={setAccountToDelete}
                 roleLabel="Nasabah"
+                demoAccount={DEMO_NASABAH}
               />
             </form>
           )}
@@ -478,16 +493,51 @@ interface SavedAccountsSectionProps {
   onSelect: (account: SavedAccount) => void;
   onDelete: (account: SavedAccount) => void;
   roleLabel: string;
+  demoAccount?: SavedAccount;
 }
 
 const SavedAccountsSection: React.FC<SavedAccountsSectionProps> = ({
   accounts,
   onSelect,
   onDelete,
-  roleLabel
+  roleLabel,
+  demoAccount
 }) => {
   return (
     <div className="pt-4 border-t border-slate-100 space-y-2.5">
+
+      {/* Demo Account Card — always visible if provided */}
+      {demoAccount && (
+        <div className="space-y-2">
+          <p className="text-[11px] font-bold text-pink-500 uppercase tracking-wider text-center flex items-center justify-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5" /> Akun Demo Presentasi
+          </p>
+          <button
+            type="button"
+            onClick={() => onSelect(demoAccount)}
+            className="w-full p-3 rounded-xl bg-gradient-to-r from-pink-50 to-rose-50 hover:from-pink-100 hover:to-rose-100 border-2 border-dashed border-pink-300 transition-all flex items-center justify-between text-xs group cursor-pointer"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-pink-500 text-white flex items-center justify-center shrink-0">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <p className="font-bold text-slate-800 group-hover:text-pink-700 transition-colors">
+                  {demoAccount.fullName}
+                </p>
+                <p className="text-[10px] text-slate-500 font-mono">
+                  NIK: {demoAccount.nik}
+                  {demoAccount.dusun && ` • ${demoAccount.dusun}`}
+                </p>
+              </div>
+            </div>
+            <span className="text-[10px] font-extrabold text-white bg-pink-500 px-2.5 py-1 rounded-lg shadow-sm group-hover:bg-pink-600 transition-colors">
+              1-Tap Login
+            </span>
+          </button>
+        </div>
+      )}
+
       <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center flex items-center justify-center gap-1.5">
         <Bookmark className="w-3.5 h-3.5 text-pink-500" /> Akun {roleLabel} Tersimpan di Perangkat Ini
       </p>

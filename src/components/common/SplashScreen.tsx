@@ -107,7 +107,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
 
         {/* Powered by text */}
         <p className="splash-fade-in splash-delay-1200 mt-4 text-[10px] text-white/30 font-medium tracking-widest uppercase">
-          KKN-K Rowotamtu 2025
+          KKN-K Rowotamtu 2026
         </p>
       </div>
     </div>
