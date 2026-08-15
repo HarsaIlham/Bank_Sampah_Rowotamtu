@@ -10,7 +10,7 @@ import type {
 // Query Keys Constant
 export const QUERY_KEYS = {
   wasteCategories: ['wasteCategories'] as const,
-  wasteTypes: (categoryId?: string) => ['wasteTypes', categoryId || 'all'] as const,
+  wasteTypes: (categoryId?: string, activeOnly?: boolean) => ['wasteTypes', categoryId || 'all', activeOnly ? 'active' : 'all'] as const,
   nasabahList: ['nasabahList'] as const,
   nasabahSummaries: ['nasabahSummaries'] as const,
   nasabahSummary: (id?: string) => ['nasabahSummary', id] as const,
@@ -33,10 +33,10 @@ export function useWasteCategories() {
   });
 }
 
-export function useWasteTypes(categoryId?: string) {
+export function useWasteTypes(categoryId?: string, activeOnly?: boolean) {
   return useQuery({
-    queryKey: QUERY_KEYS.wasteTypes(categoryId),
-    queryFn: () => supabaseService.getWasteTypes(categoryId),
+    queryKey: QUERY_KEYS.wasteTypes(categoryId, activeOnly),
+    queryFn: () => supabaseService.getWasteTypes(categoryId, activeOnly),
     staleTime: 5 * 60 * 1000 // 5 minutes
   });
 }
@@ -137,3 +137,27 @@ export function useUpdateSettings() {
     }
   });
 }
+
+export function useToggleWasteTypeStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, is_active }: { id: string; is_active: boolean }) =>
+      supabaseService.toggleWasteTypeStatus(id, is_active),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wasteTypes'] });
+    }
+  });
+}
+
+export function useDeleteWasteType() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => supabaseService.deleteWasteType(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wasteTypes'] });
+    }
+  });
+}
+

@@ -144,8 +144,8 @@ export const supabaseService = {
     return data as WasteCategory[];
   },
 
-  /** Fetch all waste types, optionally filtered by category */
-  async getWasteTypes(categoryId?: string): Promise<WasteTypeWithCategory[]> {
+  /** Fetch all waste types, optionally filtered by category and active status */
+  async getWasteTypes(categoryId?: string, activeOnly?: boolean): Promise<WasteTypeWithCategory[]> {
     let query = supabase
       .from('waste_types')
       .select(`
@@ -154,8 +154,12 @@ export const supabaseService = {
       `)
       .order('name');
 
-    if (categoryId) {
+    if (categoryId && categoryId !== 'all') {
       query = query.eq('category_id', categoryId);
+    }
+
+    if (activeOnly) {
+      query = query.eq('is_active', true);
     }
 
     const { data, error } = await query;
@@ -181,6 +185,7 @@ export const supabaseService = {
     name: string;
     price_per_kg: number;
     unit: 'kg' | 'liter' | 'pcs';
+    is_active?: boolean;
   }): Promise<WasteType> {
     const { data, error } = await supabase
       .from('waste_types')
@@ -189,7 +194,7 @@ export const supabaseService = {
         name: input.name,
         price_per_kg: input.price_per_kg,
         unit: input.unit,
-        is_active: true
+        is_active: input.is_active !== undefined ? input.is_active : true
       })
       .select()
       .single();
@@ -211,14 +216,37 @@ export const supabaseService = {
     return data as WasteType;
   },
 
-  /** Delete a waste type */
-  async deleteWasteType(id: string): Promise<void> {
+  /**
+   * Delete or soft-delete a waste type.
+   * If the waste type is referenced in historical deposit_items (foreign key 23503),
+   * it automatically deactivates (is_active = false) to prevent database error
+   * while keeping historical transaction receipts intact.
+   */
+  async deleteWasteType(id: string): Promise<{ mode: 'deleted' | 'deactivated' }> {
     const { error } = await supabase
       .from('waste_types')
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      if (
+        error.code === '23503' || 
+        error.message?.includes('violates foreign key constraint') ||
+        error.message?.includes('deposit_items')
+      ) {
+        // Soft delete: deactivate
+        await this.updateWasteType(id, { is_active: false });
+        return { mode: 'deactivated' };
+      }
+      throw error;
+    }
+
+    return { mode: 'deleted' };
+  },
+
+  /** Toggle active/inactive status of a waste type */
+  async toggleWasteTypeStatus(id: string, is_active: boolean): Promise<WasteType> {
+    return this.updateWasteType(id, { is_active });
   },
 
   // ==========================================================================

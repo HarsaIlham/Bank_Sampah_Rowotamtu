@@ -28,7 +28,7 @@ interface LandingPageProps {
 export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
   const navigate = useNavigate();
   const { data: reports = null } = useReports();
-  const { data: allWasteTypes = [] } = useWasteTypes();
+  const { data: allWasteTypes = [] } = useWasteTypes(undefined, true);
   const wasteTypes = allWasteTypes.slice(0, 4);
   const articles: EducationalArticle[] = supabaseService.getArticles().slice(0, 3);
 

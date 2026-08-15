@@ -19,7 +19,7 @@ interface InputDepositRow {
 export const AdminInputDepositPage: React.FC = () => {
   const navigate = useNavigate();
   const { data: users = [], isLoading: loadingUsers } = useNasabahSummaries();
-  const { data: wasteTypes = [], isLoading: loadingTypes } = useWasteTypes();
+  const { data: wasteTypes = [], isLoading: loadingTypes } = useWasteTypes(undefined, true);
   const { settings } = useSettings();
   const createDepositMutation = useCreateDeposit();
 

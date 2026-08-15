@@ -15,7 +15,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onOpenCalculator }) =>
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('semua');
 
-  const { data: wasteTypes = [], isLoading: loadingTypes } = useWasteTypes();
+  const { data: wasteTypes = [], isLoading: loadingTypes } = useWasteTypes(undefined, true);
   const { data: categories = [], isLoading: loadingCats } = useWasteCategories();
 
   const loading = loadingTypes || loadingCats;

@@ -29,7 +29,7 @@ export const WasteCalculatorModal: React.FC<{ isOpen: boolean; onClose: () => vo
     const loadTypes = async () => {
       try {
         setLoading(true);
-        const types = await supabaseService.getWasteTypes();
+        const types = await supabaseService.getWasteTypes(undefined, true);
         if (isMounted) {
           setWasteTypes(types);
           if (types.length > 0) {
